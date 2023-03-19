@@ -26,8 +26,7 @@ def script_load(settings):
     
     randomizer_path = OBS.obs_data_get_string(settings, "randomizer_path")
     destination_path = OBS.obs_data_get_string(settings, "destination_path")
-    OBS.script_log(OBS.LOG_INFO, randomizer_path)
-    OBS.script_log(OBS.LOG_INFO, destination_path)
+    OBS.script_log(OBS.LOG_INFO, '2023-03-19-13:48' )
 
     # set hotkey
     global hotkey_id
@@ -43,24 +42,17 @@ def script_save(settings):
     OBS.obs_data_set_array(settings, "oricopystats_hotkey", hotkey_save_array)
     OBS.obs_data_array_release(hotkey_save_array)
 
+def copyfiles(srcpath, destpath, filename):
+    # Parses seed/stat files and stores the seed name for the files in variables.
+    # Then copies the file to the specified directory
+        if os.path.exists(srcpath + '\\' + filename):
+            with open((srcpath + '\\' + filename), 'r', encoding='utf-8') as f:
+                headers = f.readline()
+            headers=headers.strip().replace('|' , ',')
+            headers=headers.split(",")
+            headers = (headers[-1])
+            shutil.copy2((srcpath + '\\' + filename) , (destpath + '\\' + headers + '-' +  filename))
+        
 def copystats_copy_files(props):
-
-    # Parses the seed and stat files and stores the 
-    # seed name for the files in variables.
-    ## Copy the seeds and stats to the specified directory
-
-    if os.path.exists(randomizer_path + '\\' + seed_file_name):
-        with open((randomizer_path + '\\' + seed_file_name), 'r', encoding='utf-8') as f:
-            seed_headers = f.readline()
-        seed_headers=seed_headers.strip().replace('|' , ',')
-        seed_headers=seed_headers.split(",")
-        seed_headers = (seed_headers[-1])
-        shutil.copy2((randomizer_path + '\\' + seed_file_name) , (destination_path + '\\' + seed_headers + '-' +  seed_file_name))
-
-    if os.path.exists(randomizer_path + '\\' + stats_file_name):
-        with open((randomizer_path + '\\' + stats_file_name), 'r', encoding='utf-8') as f:
-            stats_headers = f.readline()
-        stats_headers=stats_headers.strip().replace('|' , ',')
-        stats_headers=stats_headers.split(",")
-        stats_headers = (stats_headers[-1])
-        shutil.copy2((randomizer_path + '\\' + stats_file_name) , (destination_path + '\\' + stats_headers + '-' + stats_file_name))
+    copyfiles(randomizer_path, destination_path, seed_file_name)
+    copyfiles(randomizer_path, destination_path, stats_file_name)
