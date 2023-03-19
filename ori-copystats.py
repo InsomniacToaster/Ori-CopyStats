@@ -2,6 +2,7 @@
 import shutil
 import obspython as OBS
 import os
+from datetime import datetime
 
 randomizer_path = ''
 destination_path = ''
@@ -26,7 +27,7 @@ def script_load(settings):
     
     randomizer_path = OBS.obs_data_get_string(settings, "randomizer_path")
     destination_path = OBS.obs_data_get_string(settings, "destination_path")
-    OBS.script_log(OBS.LOG_INFO, '2023-03-19-14:14' )
+    OBS.script_log(OBS.LOG_INFO, '2023-03-19-14:37' )
 
     # set hotkey
     global hotkey_id
@@ -43,8 +44,8 @@ def script_save(settings):
     OBS.obs_data_array_release(hotkey_save_array)
 
 def copyfiles(srcpath, destpath, filename):
-    # Parses seed/stat files and stores the seed name for the files in variables.
-    # Then copies the file to the specified directory
+    # Parses seed/stat files and stores the seed name for the files in variables
+    # Then copies the file to the specified directory as long as the file doesn't already exist
     if os.path.exists(srcpath + '\\' + filename):
         with open((srcpath + '\\' + filename), 'r', encoding='utf-8') as f:
             headers = f.readline()
@@ -54,6 +55,8 @@ def copyfiles(srcpath, destpath, filename):
 
     if not os.path.isfile(destpath + '\\' + headers + '-' + filename):
         shutil.copy2((srcpath + '\\' + filename) , (destpath + '\\' + headers + '-' +  filename))
+    else:
+        shutil.copy2((srcpath + '\\' + filename) , (destpath + '\\' + headers + '-' +  filename + datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")))
         
 def copystats_copy_files(props):
     copyfiles(randomizer_path, destination_path, seed_file_name)
