@@ -1,6 +1,7 @@
 # look into marshalling
 import shutil
 import obspython as OBS
+import os
 
 randomizer_path = ''
 destination_path = ''
@@ -46,20 +47,20 @@ def copystats_copy_files(props):
 
     # Parses the seed and stat files and stores the 
     # seed name for the files in variables.
-
-    with open((randomizer_path + '\\' + seed_file_name), 'r', encoding='utf-8') as f:
-        seed_headers = f.readline()
-    seed_headers=seed_headers.strip().replace('|' , ',')
-    seed_headers=seed_headers.split(",")
-    seed_headers = (seed_headers[-1])
-
-    with open((randomizer_path + '\\' + stats_file_name), 'r', encoding='utf-8') as f:
-        stats_headers = f.readline()
-    stats_headers=stats_headers.strip().replace('|' , ',')
-    stats_headers=stats_headers.split(",")
-    stats_headers = (stats_headers[-1])
-
     ## Copy the seeds and stats to the specified directory
-    shutil.copy2((randomizer_path + '\\' + seed_file_name) , (destination_path + '\\' + seed_headers + '-' +  seed_file_name))
-    shutil.copy2((randomizer_path + '\\' + stats_file_name) , (destination_path + '\\' + stats_headers + '-' + stats_file_name))
 
+    if os.path.exists(randomizer_path + '\\' + seed_file_name):
+        with open((randomizer_path + '\\' + seed_file_name), 'r', encoding='utf-8') as f:
+            seed_headers = f.readline()
+        seed_headers=seed_headers.strip().replace('|' , ',')
+        seed_headers=seed_headers.split(",")
+        seed_headers = (seed_headers[-1])
+        shutil.copy2((randomizer_path + '\\' + seed_file_name) , (destination_path + '\\' + seed_headers + '-' +  seed_file_name))
+
+    if os.path.exists(randomizer_path + '\\' + stats_file_name):
+        with open((randomizer_path + '\\' + stats_file_name), 'r', encoding='utf-8') as f:
+            stats_headers = f.readline()
+        stats_headers=stats_headers.strip().replace('|' , ',')
+        stats_headers=stats_headers.split(",")
+        stats_headers = (stats_headers[-1])
+        shutil.copy2((randomizer_path + '\\' + stats_file_name) , (destination_path + '\\' + stats_headers + '-' + stats_file_name))
