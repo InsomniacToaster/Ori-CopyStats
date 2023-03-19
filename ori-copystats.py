@@ -42,7 +42,7 @@ def script_save(settings):
     OBS.obs_data_set_array(settings, "oricopystats_hotkey", hotkey_save_array)
     OBS.obs_data_array_release(hotkey_save_array)
 
-def copystats_copy_files():
+def copystats_copy_files(props):
 
     # Parses the seed and stat files and stores the 
     # seed name for the files in variables.
