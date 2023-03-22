@@ -17,6 +17,7 @@ def script_description():
 
 def script_properties():
     props = OBS.obs_properties_create()
+    # Allows user to select the ori DE application path and the preferred destination path for the files
     OBS.obs_properties_add_path(props, "randomizer_path", 'Ori DE File Path', OBS.OBS_PATH_DIRECTORY, '', 'C:/Program Files (x86)/Steam/steamapps/common/Ori DE')
     OBS.obs_properties_add_path(props, "destination_path", 'File Destination Path', OBS.OBS_PATH_DIRECTORY, '', None)
     return props
@@ -27,7 +28,7 @@ def script_load(settings):
     
     randomizer_path = OBS.obs_data_get_string(settings, "randomizer_path")
     destination_path = OBS.obs_data_get_string(settings, "destination_path")
-    OBS.script_log(OBS.LOG_INFO, '2023-03-22-15:01' )
+    OBS.script_log(OBS.LOG_INFO, '2023-03-22-15:43' )
 
     # set hotkey
     global hotkey_id
@@ -45,7 +46,7 @@ def script_save(settings):
 
 def copyfiles(srcpath, destpath, filename):
     # Parses seed/stat files and stores the seed name for the files in variables
-    # Then copies the file to the specified directory as long as the file doesn't already exist
+    # Then copies the file to the specified directory as long as the file doesn't already exist.
     if os.path.exists(srcpath + '\\' + filename):
         with open((srcpath + '\\' + filename), 'r', encoding='utf-8') as f:
             headers = f.readline()
@@ -56,7 +57,10 @@ def copyfiles(srcpath, destpath, filename):
     if not os.path.isfile(destpath + '\\' + headers + '-' + filename):
         shutil.copy2((srcpath + '\\' + filename) , (destpath + '\\' + headers + '-' +  filename))
     else:
-        shutil.copy2((srcpath + '\\' + filename) , (destpath + '\\' + headers + '-' +  filename + datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")))
+        # If the stats file exists, it will copy with a timestamp appended.
+        # If it is a duplicate seed name on a randomizer.dat file, the file will not be copied.
+        if filename == stats_file_name:
+            shutil.copy2((srcpath + '\\' + filename) , (destpath + '\\' + headers + '-' + datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p") + '-' + filename))
 
 
 # Callback for the hotkey
@@ -64,11 +68,3 @@ def ori_copystats_hotkey(pressed):
     if pressed:
         copyfiles(randomizer_path, destination_path, seed_file_name)
         copyfiles(randomizer_path, destination_path, stats_file_name)
-
-## def copystats_copy_files(props):
-   ## if is_active:
-        ## copyfiles(randomizer_path, destination_path, seed_file_name)
-        ## copyfiles(randomizer_path, destination_path, stats_file_name)
-
-## OBS.timer_add(copystats_copy_files, 100)
-
