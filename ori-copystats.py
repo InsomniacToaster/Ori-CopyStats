@@ -8,7 +8,7 @@ randomizer_path = ''
 destination_path = ''
 seed_file_name = 'randomizer.dat'
 stats_file_name = 'stats.txt'
-hotkey_id = OBS.OBS_INVALID_HOTKEY_ID
+is_active = False
 
 # Description displayed in the Scripts dialog window
 def script_description():
@@ -27,12 +27,12 @@ def script_load(settings):
     
     randomizer_path = OBS.obs_data_get_string(settings, "randomizer_path")
     destination_path = OBS.obs_data_get_string(settings, "destination_path")
-    OBS.script_log(OBS.LOG_INFO, '2023-03-19-14:37' )
+    OBS.script_log(OBS.LOG_INFO, '2023-03-22-15:01' )
 
     # set hotkey
     global hotkey_id
     hotkey_id = OBS.obs_hotkey_register_frontend(
-        script_path(), "Ori CopyStats", copystats_copy_files)
+        script_path(), "Ori CopyStats", ori_copystats_hotkey)
     hotkey_save_array = OBS.obs_data_get_array(
         settings, "oricopystats_hotkey")
     OBS.obs_data_array_release(hotkey_save_array)
@@ -57,7 +57,18 @@ def copyfiles(srcpath, destpath, filename):
         shutil.copy2((srcpath + '\\' + filename) , (destpath + '\\' + headers + '-' +  filename))
     else:
         shutil.copy2((srcpath + '\\' + filename) , (destpath + '\\' + headers + '-' +  filename + datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")))
-        
-def copystats_copy_files(props):
-    copyfiles(randomizer_path, destination_path, seed_file_name)
-    copyfiles(randomizer_path, destination_path, stats_file_name)
+
+
+# Callback for the hotkey
+def ori_copystats_hotkey(pressed):
+    if pressed:
+        copyfiles(randomizer_path, destination_path, seed_file_name)
+        copyfiles(randomizer_path, destination_path, stats_file_name)
+
+## def copystats_copy_files(props):
+   ## if is_active:
+        ## copyfiles(randomizer_path, destination_path, seed_file_name)
+        ## copyfiles(randomizer_path, destination_path, stats_file_name)
+
+## OBS.timer_add(copystats_copy_files, 100)
+
