@@ -28,7 +28,7 @@ def script_load(settings):
     
     randomizer_path = OBS.obs_data_get_string(settings, "randomizer_path")
     destination_path = OBS.obs_data_get_string(settings, "destination_path")
-    OBS.script_log(OBS.LOG_INFO, '2023-03-22-15:43' )
+    OBS.script_log(OBS.LOG_INFO, '2023-03-22-17:57' )
 
     # set hotkey
     global hotkey_id
@@ -50,9 +50,22 @@ def copyfiles(srcpath, destpath, filename):
     if os.path.exists(srcpath + '\\' + filename):
         with open((srcpath + '\\' + filename), 'r', encoding='utf-8') as f:
             headers = f.readline()
-        headers=headers.strip().replace('|' , ',')
-        headers=headers.split(",")
+        headers = headers.split("|", 1)
+        headers[-1] = headers[-1].strip()
+        headers0 = headers[0].split(",")
+        headers1 = headers[1]
+        headers = headers0
+        headers.append(headers1)
         headers = (headers[-1])
+        
+        illegal_characters = '\/:*?"<>|'
+        illegal_characters_found = False
+        for char in illegal_characters:
+            if char in headers:
+                illegal_characters_found = True
+                headers = headers.replace(char, '')
+        if illegal_characters_found:
+            headers = headers + 'illglchar'
 
     if not os.path.isfile(destpath + '\\' + headers + '-' + filename):
         shutil.copy2((srcpath + '\\' + filename) , (destpath + '\\' + headers + '-' +  filename))
